@@ -9,6 +9,7 @@ export interface TaskDocument extends Document {
 const taskSchema = new Schema<TaskDocument>({
   title: {
     type: String,
+    unique: true,
     required: true,
     minlength: 2,
     maxlength: 50,
