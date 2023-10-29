@@ -22,3 +22,14 @@ app.use(
     }),
   })
 );
+
+
+// Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+app.listen(port, () => winston.info(`Listening on port ${port}...`));
