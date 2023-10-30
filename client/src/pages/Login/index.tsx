@@ -1,6 +1,6 @@
-import Form from "@/components/common/Form";
-import PasswordField from "@/components/common/PasswordField";
-import TextField from "@/components/common/TextField";
+import Form from "@/components/Common/Form";
+import PasswordField from "@/components/Common/PasswordField";
+import TextField from "@/components/Common/TextField";
 import { Link as RouterLink } from "react-router-dom";
 import { Button, Link } from "@chakra-ui/react";
 import { loginSchema } from "./login.schema";

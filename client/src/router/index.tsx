@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PublicRoute from "./PublicRoute";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
 const Router = () => {
   return (
     <BrowserRouter>

@@ -1,6 +1,6 @@
 import { useMutation } from "react-query";
-import useNotify from "@/hooks/useNotify";
-import API from "@/services/API";
+import useNotify from "../../hooks/useNotify";
+import API from "../../services/API";
 import { useNavigate } from "react-router-dom";
 
 const useRegisterActions = () => {

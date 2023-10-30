@@ -1,5 +1,5 @@
-import PublicLayout from "@/layouts/PublicLayout";
-import { useAuth } from "@/store/useAuth";
+import PublicLayout from "../layouts/PublicLayout";
+import { useAuth } from "../store/useAuth";
 import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoute = () => {
