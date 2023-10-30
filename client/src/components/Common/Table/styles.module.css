@@ -1,0 +1,12 @@
+.colHead.active {
+  background-color:  rgba(150, 150, 150, 0.1);
+}
+
+.colHead.clickable {
+  cursor: pointer;
+  transition: 0.3s all;
+}
+
+.colHead.clickable:hover {
+  background-color: rgba(80, 80, 80, 0.1);
+}
