@@ -1,6 +1,6 @@
 import { useMutation } from "react-query";
-import useNotify from "../../hooks/useNotify";
-import API from "../../services/API";
+import useNotify from "@/hooks/useNotify";
+import API from "@/services/API";
 import { useNavigate } from "react-router-dom";
 
 const useRegisterActions = () => {
@@ -15,7 +15,11 @@ const useRegisterActions = () => {
         navigate("/login");
       },
       onError: (error: any) => {
-        notifyError(`Error while registering. ${error.response.data.message}.`);
+        if(error.code === "ERR_BAD_REQUEST") {
+          notifyError(`Error while registering. ${error.response.statusText}`);
+        } else {
+          notifyError(`Error while registering. ${error.response.data.message}.`);
+        }       
       },
     }
   );

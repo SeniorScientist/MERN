@@ -7,7 +7,6 @@ const Columns: ColumnConfig[] = [
   { key: 'id', flex: 0.5, label: 'ID', sortable: true },
   { key: 'title', flex: 2, label: 'Title', sortable: true },
   { key: 'description', flex: 2, label: 'Description', sortable: true },
-  // { key: 'gender', label: 'Gender', render: (row: Task) => <GenderIcon gender={row.gender} /> }
 ]
 
 const TaskBoard = () => {
@@ -18,11 +17,11 @@ const TaskBoard = () => {
 
 
   return (
-    <Box w="100%" mx="auto" px="50px">
-      <Heading fontSize='24px' fontWeight='medium'>
+    <Box w="100%" mx="auto" p="50px">
+      <Heading fontSize='24px' fontWeight='medium' color='white' pb='50px'>
         Task Management Board
       </Heading>
-      <Box mt="20px">
+      <Box>
         <ReusableTable
           loading={loading}
           columns={Columns}

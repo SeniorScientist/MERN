@@ -11,8 +11,8 @@ const Register = () => {
 
   return (
     <section className="public-form">
-      <h1>Welcome 🥗</h1>
-      <h2>🚀 Revolutionize and join the movement!</h2>
+      <h1>Welcome to my home assessment</h1>
+      <h2>Revolutionize and join the movement!</h2>
 
       <Form
         onSubmit={handleSubmit}

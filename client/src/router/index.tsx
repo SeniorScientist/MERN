@@ -13,12 +13,12 @@ const Router = () => {
         <Route path="/" element={<PublicRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/task" element={<TaskBoard />}/>
         </Route>
 
         <Route path="/" element={<PrivateRoute />}>
           <Route path="/home" element={<Home />} />
           <Route path="/logout" element={<Logout />} />
-          <Route path="/task" element={<TaskBoard />}/>
         </Route>
 
         <Route path="*" element={<Navigate to='/' />} />
