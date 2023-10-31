@@ -12,6 +12,7 @@ import { initLogger } from "@startup/logging";
 import { initPassportJS } from "@startup/passport";
 import { initRoutes } from "@routes/index";
 import { initRateLimit } from "@startup/rate-limit";
+
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 initRoutes(app);
 app.listen(port, () => winston.info(`Listening on port ${port}...`));
