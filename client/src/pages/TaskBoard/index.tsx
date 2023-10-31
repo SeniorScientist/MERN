@@ -18,9 +18,6 @@ const TaskBoard = () => {
 
   return (
     <Box w="100%" mx="auto" p="50px">
-      <Heading fontSize='24px' fontWeight='medium' color='white' pb='50px'>
-        Task Management Board
-      </Heading>
       <Box>
         <ReusableTable
           loading={loading}

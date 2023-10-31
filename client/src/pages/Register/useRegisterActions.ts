@@ -15,11 +15,11 @@ const useRegisterActions = () => {
         navigate("/login");
       },
       onError: (error: any) => {
-        if(error.code === "ERR_BAD_REQUEST") {
-          notifyError(`Error while registering. ${error.response.statusText}`);
+        if (error.response.status && error.response.status === 400) {
+          notifyError(error.response.data.message);
         } else {
-          notifyError(`Error while registering. ${error.response.data.message}.`);
-        }       
+          notifyError("Login failed, please try again!");
+        }
       },
     }
   );

@@ -23,7 +23,6 @@ const Register = () => {
           lg: "60%",
         }}
       >
-        <TextField name="name" label="Full name" />
         <TextField name="email" label="Email" type="email" />
         <TextField name="username" label="Username" />
         <PasswordField name="password" label="Password" />
