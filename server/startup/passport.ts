@@ -5,11 +5,9 @@ import { Error } from "mongoose";
 
 export function initPassportJS() {
   passport.use(
-    new Local.Strategy((username, password, done) => {
-      User.findOne({ username }, (err: Error, user: UserDocument) => {
-        if (err) {
-          return done(err);
-        }
+    new Local.Strategy(async (username, password, done) => {
+      try {
+        const user = await User.findOne({ username });
         if (!user) {
           return done(undefined, false, { message: `Username ${username} not found` });
         }
@@ -17,7 +15,9 @@ export function initPassportJS() {
           return done(undefined, false, { message: "Incorrect username or password" });
         }
         return done(undefined, user);
-      });
+      } catch (error) {
+        return done(error);
+      }
     })
   );
   passport.serializeUser((user, done) => done(undefined, user));
