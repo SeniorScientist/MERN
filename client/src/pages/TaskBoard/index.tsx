@@ -1,7 +1,8 @@
 import { Box, Heading } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Task } from "@/types/task"
 import ReusableTable, { ColumnConfig } from "@/components/Common/Table";
+import API from "@/services/API";
 
 const Columns: ColumnConfig[] = [
   { key: 'id', flex: 0.5, label: 'ID', sortable: true },
@@ -15,6 +16,24 @@ const TaskBoard = () => {
   const [tasks, setTasks] = useState<Task[]>([])
   const [selectedRows, setSelectedRows] = useState<Task[]>([])
 
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      const res = await API.get('/task', { params: {  } })
+      setTasks(res.data.tasks.map((e: any, index: number) => ({
+        id: index + 1,
+        ...e
+      })))
+    } catch (err) {
+      console.log("~ file: index.tsx ~ line 30 ~ fetchData ~ err", err)
+    } finally {
+      setLoading(false)
+    }  
+  }
 
   return (
     <Box w="100%" mx="auto" p="50px">
@@ -22,7 +41,7 @@ const TaskBoard = () => {
         <ReusableTable
           loading={loading}
           columns={Columns}
-          data={[]}
+          data={tasks}
           searchFields={['title']}
           onSelectRows={rows => setSelectedRows(rows)}
           useUrlQuery

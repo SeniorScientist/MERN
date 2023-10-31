@@ -1,4 +1,4 @@
-import { Flex, Input } from '@chakra-ui/react'
+import { Button, Flex, Input } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 
 interface TableToolbarProps {
@@ -20,14 +20,16 @@ const TableToolbar = (props: TableToolbarProps) => {
   }, [value])
 
   return (
-    <Flex>
+    <Flex flexDir="row" justifyContent="space-between" width="100%">
       {searchable && (
         <Input
           placeholder='Search...'
           value={value}
           onChange={e => setValue(e.target.value)}
+          width="initial"
         />
       )}
+      <Button>Create</Button>
     </Flex>
   )
 }

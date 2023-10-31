@@ -7,7 +7,7 @@ const PublicRoute = () => {
   const hasAccessToken = localStorage.getItem("access_token");
 
   if (isAuthenticated || hasAccessToken) {
-    return <Navigate to="/home" />;
+    return <Navigate to="/login" />;
   }
 
   return (
