@@ -1,0 +1,16 @@
+# pull official base image
+FROM node:20.9.0
+
+# set working directory
+WORKDIR /app
+
+# install app dependencies
+COPY package.json ./
+# COPY yarn.lock ./
+
+RUN yarn install --immutable 
+# add app
+COPY . ./
+
+# start app
+CMD ["yarn", "start"]

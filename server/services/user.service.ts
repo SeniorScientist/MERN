@@ -1,6 +1,5 @@
 import { Schema } from "mongoose";
 import { User, UserDocument } from "@models/user.model";
-import dayjs from "dayjs";
 
 export const getUser = (user: UserDocument) => user.hidePassword();
 
@@ -23,8 +22,6 @@ export const saveUser = async (user: UserDocument) => await user.save();
 
 export const setUserPassword = async (user: UserDocument, password: string) => {
   user.password = password;
-  user.passwordResetToken = "";
-  user.passwordResetExpires = dayjs().toDate();
   return await user.hashPassword();
 };
 

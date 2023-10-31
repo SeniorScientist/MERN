@@ -5,8 +5,25 @@ import MongoStore from "connect-mongo";
 import bodyParser from "body-parser";
 import express from "express";
 
-const port = process.env.PORT || 3900;
+import { initProd } from "@startup/prod";
+import { initDB } from "@startup/db";
+import { initCORS } from "@startup/cors";
+import { initLogger } from "@startup/logging";
+import { initPassportJS } from "@startup/passport";
+import { initRoutes } from "@routes/index";
+import { initRateLimit } from "@startup/rate-limit";
+const dotenv = require('dotenv');
+dotenv.config();
+
+const port = process.env.PORT || 8081;
 const app = express();
+
+initPassportJS();
+initLogger();
+initCORS(app);
+initDB();
+initProd(app);
+initRateLimit(app);
 
 // Create session
 app.use(
@@ -15,10 +32,10 @@ app.use(
     secret: process.env.SESSION_KEY!,
     resave: false,
     saveUninitialized: false,
-    // cookie: { secure: true } when using HTTPS
+    cookie: { maxAge: 60 * 60 * 1000 },
     // Store session on DB
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI || "mongodb://localhost:27017/test",
+      mongoUrl: process.env.MONGO_URI,
     }),
   })
 );
@@ -31,5 +48,5 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-
+initRoutes(app);
 app.listen(port, () => winston.info(`Listening on port ${port}...`));
