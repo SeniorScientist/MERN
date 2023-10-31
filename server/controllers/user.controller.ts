@@ -35,22 +35,15 @@ export const postUser = async (req: Request, res: Response) => {
 
     const newUser = UserService.createUser(sanitizedInput);
     await UserService.setUserPassword(newUser, newUser.password);
+  
     try {
       await UserService.saveUser(newUser);
       const verificationToken = TokenService.createToken();
       TokenService.setUserId(verificationToken, newUser._id);
       TokenService.saveToken(verificationToken);
       
-      try {
-        
-        return res.status(200).send({ message: "A verification mail has been sent." });
-      } catch (error) {
-        UserService.deleteUserById(newUser._id);
+      return res.status(200).send({ message: "User registered successfully." });
 
-        return res.status(503).send({
-          message: `Impossible to send an email to ${newUser.email}, try again. Our service may be down.`,
-        });
-      }
     } catch (error) {
       LoggerService.log.error(error);
 

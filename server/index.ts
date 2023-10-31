@@ -13,7 +13,7 @@ import { initPassportJS } from "@startup/passport";
 import { initRoutes } from "@routes/index";
 import { initRateLimit } from "@startup/rate-limit";
 
-const port = process.env.PORT || 3900;
+const port = process.env.PORT || 8081;
 const app = express();
 
 initPassportJS();
@@ -27,7 +27,7 @@ initRateLimit(app);
 app.use(
   session({
     // Used to compute a hash
-    secret: process.env.SESSION_KEY!,
+    secret: process.env.SESSION_KEY || 'your key',
     resave: false,
     saveUninitialized: false,
     // cookie: { secure: true } when using HTTPS
