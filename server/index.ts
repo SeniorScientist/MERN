@@ -12,6 +12,8 @@ import { initLogger } from "@startup/logging";
 import { initPassportJS } from "@startup/passport";
 import { initRoutes } from "@routes/index";
 import { initRateLimit } from "@startup/rate-limit";
+const dotenv = require('dotenv');
+dotenv.config();
 
 const port = process.env.PORT || 8081;
 const app = express();
@@ -27,13 +29,13 @@ initRateLimit(app);
 app.use(
   session({
     // Used to compute a hash
-    secret: process.env.SESSION_KEY || 'your key',
+    secret: process.env.SESSION_KEY!,
     resave: false,
     saveUninitialized: false,
-    // cookie: { secure: true } when using HTTPS
+    cookie: { maxAge: 60 * 60 * 1000 },
     // Store session on DB
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI || "mongodb://localhost:27017/mern",
+      mongoUrl: process.env.MONGO_URI,
     }),
   })
 );
