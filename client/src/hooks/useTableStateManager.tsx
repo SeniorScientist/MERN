@@ -20,13 +20,14 @@ const useTableStateManager = (params: StateManagerProps) => {
       const search = String(url.searchParams.get('search'));
 
       setSortedBy([sortBy, order])
-      setPage(page)
+      setPage(page == 0 ? 1 : page)
       setSearchText(search)
     }
   }, [byUrlQuery]);
 
   const changePage = (p: number) => {
-    setPage(p)
+
+    setPage(p > 0 ? p : 1)
     if (byUrlQuery) updateUrlQueries([['page', p]])
   }
 
@@ -45,7 +46,7 @@ const useTableStateManager = (params: StateManagerProps) => {
     data.forEach(e => queryParams.set(e[0], String(e[1])))
     window.history.replaceState(null, '', '?' + queryParams.toString());
   }
-  
+
   return {
     page, sortedBy, searchText,
     changePage, changeSortedBy, changeSearchText,

@@ -20,14 +20,14 @@ const TablePagination = (props: TablePaginationProps) => {
       <IconButton
         aria-label='prev'
         variant='outline'
-        onClick={() => onPageChanged(page - 1)}
+        onClick={() => onPageChanged(page - 1 < 0 ? page : page - 1)}
         disabled={page <= 1}
         icon={<Icon as={MdChevronLeft} />}
       />
       <IconButton
         aria-label='next'
         variant='outline'
-        onClick={() => onPageChanged(page + 1)}
+        onClick={() => onPageChanged(page + 1 > Math.ceil(total/pageSize) ? page : page + 1)}
         disabled={page >= totalPage}
         icon={<Icon as={MdChevronRight}
       />}

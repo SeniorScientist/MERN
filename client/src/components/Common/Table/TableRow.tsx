@@ -29,10 +29,10 @@ const TableRow = (props: TableRowProps) => {
       )}
       {columns.map(e => {
         return (
-          <Box key={e.key} flex={e.flex || 1} alignItems='center' px='5px' py='10px' cursor='pointer' onClick={e => handleClick(itemData)}>
+          <Box key={e.key} flex={e.flex || 1} alignItems='center' px='5px' py='10px' cursor='pointer' onClick={e => handleClick(itemData)} overflow='hidden'>
             {e.render
               ? e.render(itemData)
-              : <Text>{itemData[e.key]}</Text>
+              : <Text wordBreak='normal' textOverflow='ellipsis'>{itemData[e.key]}</Text>
             }
           </Box>
         )

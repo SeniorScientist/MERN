@@ -7,17 +7,17 @@ import CreateModal from "@/components/Common/Modal/CreateModal";
 import DeleteModal from "@/components/Common/Modal/DeleteModal";
 import { useNavigate } from "react-router-dom";
 import UpdateModal from "@/components/Common/Modal/UpdateModal";
+import moment from "moment";
 
 const Columns: ColumnConfig[] = [
   { key: 'id', flex: 0.5, label: 'ID', sortable: true },
   { key: 'title', flex: 2, label: 'Title', sortable: true },
-  { key: 'description', flex: 2, label: 'Description', sortable: true },
-  { key: 'createdAt', flex: 2, label: 'Created time' }
+  { key: 'description', flex: 3, label: 'Description', sortable: true },
+  { key: 'createdAt', flex: 2, label: 'Created At' }
 ]
 
 const TaskBoard = () => {
   
-  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedRows, setSelectedRows] = useState<Task[]>([]);
@@ -41,7 +41,7 @@ const TaskBoard = () => {
         _id: e._id,
         title: e.title,
         description: e.description,
-        createdAt: e.createdAt
+        createdAt: moment(e.createdAt).format('MM/DD/YYYY hh:mm:ss')
       }))
       setTasks(tasks);
     } catch (err) {
@@ -54,7 +54,6 @@ const TaskBoard = () => {
   const deleteTasks = async () => {
     try {
       setLoading(true);
-      console.log('delete', selectedRows)
 
       const res = await API.delete('/task/delete', {
         data: {
@@ -63,9 +62,6 @@ const TaskBoard = () => {
           })
         }
       });
-
-      console.log(res)
-
     } catch (err) {
 
     } finally {
@@ -88,7 +84,6 @@ const TaskBoard = () => {
 
   const handleUpdateRow = (row: Task) => {
     setSelectedRow(row);
-    console.log('select', row)
     handleUpdateModal();
   }
 
@@ -116,7 +111,3 @@ const TaskBoard = () => {
 };
 
 export default TaskBoard;
-
-function notifySuccess(message: any) {
-  throw new Error("Function not implemented.");
-}
