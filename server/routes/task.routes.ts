@@ -18,7 +18,7 @@ router.put("/update/:id", TaskController.updateTask);
 //  Input : title, description via body;
 //  HTTP Success : 200 and message.
 //  HTTP Errors : 400,500.
-router.delete("/delete/:id", TaskController.deleteTask);
+router.delete("/delete", TaskController.deleteTask);
 
 
 export default router;

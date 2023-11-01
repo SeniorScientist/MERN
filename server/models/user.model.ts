@@ -60,7 +60,6 @@ userSchema.methods.hidePassword = function () {
   return omit(["password", "__v", "_id", "id"], this.toObject({ virtuals: true }));
 };
 
-// userSchema.plugin(passportLocalMongoose);
 
 export const User = model<UserDocument>("User", userSchema);
 
