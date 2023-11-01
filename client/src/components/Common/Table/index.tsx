@@ -6,7 +6,6 @@ import Header from "./TableHead"
 import TablePagination from "./TablePagination"
 import TableRow from "./TableRow"
 import TableToolbar from "./TableToolbar"
-import { Task } from "@/types/task"
 
 export interface ColumnConfig {
   key: string
@@ -97,7 +96,6 @@ const ReusableTable = (props: ReuseableTableProps) => {
           setTotal(res.count)
         })
     } else {
-      console.log('e', data)
       setDisplayData(data)
     }
   }

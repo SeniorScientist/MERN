@@ -28,7 +28,6 @@ export const useCreateAction = () => {
         } else {
           notifyError("Task creation failed, please try again!");
         }
-
       },
     }
   );

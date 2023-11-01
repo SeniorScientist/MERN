@@ -8,9 +8,10 @@ export interface CreateModalProps extends ModalProps {
 }
 
 export interface DeleteModalProps extends ModalProps {
-  onDelete: () => void;
+  onDelete?: () => void;
 }
 
-export interface UpdateModalProps extends ModalProps, Task {
-  onUpdate: () => void;
+export interface UpdateModalProps extends ModalProps {
+  onUpdate?: () => void;
+  task: Task
 }
