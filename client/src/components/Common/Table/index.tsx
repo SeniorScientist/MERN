@@ -44,12 +44,14 @@ interface ReuseableTableProps {
   ssr?: boolean
   ssrQueryFunc?: (params: TableQueryParams) => Promise<TableQueryResult>,
   onTaskCreate?: () => void
+  onTaskDelete?: () => void
+  onRowClick: (row: any) => void
 }
 
 const ReusableTable = (props: ReuseableTableProps) => {
   const {
     data = [], rowId = 'id', columns, selectable, loading, pageSize = DEFAULT_PAGE_SIZE, searchable = true, searchFields = [],
-    onSelectRows, useUrlQuery, ssr, ssrQueryFunc, onTaskCreate
+    onSelectRows, useUrlQuery, ssr, ssrQueryFunc, onTaskCreate, onTaskDelete, onRowClick
   } = props
   
   const { page, sortedBy, searchText, changeSearchText, changeSortedBy, changePage } = useTableStateManager({ byUrlQuery: useUrlQuery})
@@ -58,38 +60,33 @@ const ReusableTable = (props: ReuseableTableProps) => {
   const [total, setTotal] = useState(0)
   const [mounted, setMounted] = useState(false)
 
-  // const allData = useRef<any>([])
-  let allData: Task[] = []
 
   useEffect(() => {
-    setTimeout(() => setMounted(true), 1000)
+    setTimeout(() => setMounted(true), 500)
   }, [])
 
   useEffect(() => {
-    if (!ssr) filterAllData()
-    if (mounted && page !== 1) changePage(1)
-    else updatePageData()
-  }, [searchText])
-
-  useEffect(() => {
-    if (!ssr) sortAllData()
-    if (mounted && page !== 1) changePage(1)
-    else updatePageData()
-  }, [sortedBy])
-
-  useEffect(() => {
-    updatePageData()
-  }, [page])
-
-  useEffect(() => {
     if (ssr) return
-    allData = data
-    console.log(allData)
-    if (searchText && searchable) filterAllData()
     if (sortedBy) sortAllData()
     updatePageData()
-    console.log(allData)
+  
   }, [data])
+
+  // useEffect(() => {
+  //   if (!ssr) filterAllData()
+  //   if (mounted && page !== 1) changePage(1)
+  //   else updatePageData()
+  // }, [searchText])
+
+  // useEffect(() => {
+  //   if (!ssr) sortAllData()
+  //   if (mounted && page !== 1) changePage(1)
+  //   else updatePageData()
+  // }, [sortedBy])
+
+  // useEffect(() => {
+  //   updatePageData()
+  // }, [page])
 
   const updatePageData = () => {
     if (ssr) {
@@ -100,29 +97,19 @@ const ReusableTable = (props: ReuseableTableProps) => {
           setTotal(res.count)
         })
     } else {
-      console.log('1', allData)
-      setDisplayData(allData.slice((page-1)*pageSize, page*pageSize))
-      console.log('2', allData)
+      console.log('e', data)
+      setDisplayData(data)
     }
   }
 
   const sortAllData = () => {
-    allData.sort((a: any, b: any) => {
+    data.sort((a: any, b: any) => {
       let valA = a[sortedBy[0]]
       let valB = b[sortedBy[0]]
       if (typeof valA === 'string' && typeof valB === 'string') {
         return sortedBy[1] === 'desc' ? valA.localeCompare(valB) : valB.localeCompare(valA)
       }
       return sortedBy[1] === 'desc' ? valB-valA : valA-valB
-    })
-  }
-
-  const filterAllData = () => {
-    allData = data.filter(e => {
-      for (let key of searchFields) {
-        if (String(e[key]).toLowerCase().includes(searchText)) return true
-      }
-      return false
     })
   }
 
@@ -136,8 +123,8 @@ const ReusableTable = (props: ReuseableTableProps) => {
   }
 
   const count = useMemo(() => {
-    return ssr ? total : allData.length
-  }, [allData, total, ssr])
+    return ssr ? total : data.length
+  }, [data, total, ssr])
 
   const isEmpty = !loading && count === 0
 
@@ -150,7 +137,7 @@ const ReusableTable = (props: ReuseableTableProps) => {
       )}
       <Box minH='200px' opacity={loading ? 0.5 : 1}>
         <Flex alignItems='center' py='10px'>
-          <TableToolbar searchable={searchable} defaultSearch={searchText} onSearch={mounted ? changeSearchText : undefined} onCreate={onTaskCreate}/>
+          <TableToolbar searchable={searchable} defaultSearch={searchText} onSearch={mounted ? changeSearchText : undefined} removable={selectedRows.size > 0} onCreate={onTaskCreate} onDelete={onTaskDelete}/>
         </Flex>
         <Header
           selectable={selectable}
@@ -170,6 +157,7 @@ const ReusableTable = (props: ReuseableTableProps) => {
                 selectable={selectable}
                 selected={selectedRows.has(item[rowId])}
                 onSelected={onSelectedRow}
+                handleClick={item => onRowClick(item)}
               />
             )
           })}
