@@ -6,6 +6,7 @@ import Header from "./TableHead"
 import TablePagination from "./TablePagination"
 import TableRow from "./TableRow"
 import TableToolbar from "./TableToolbar"
+import { Task } from "@/types/task"
 
 export interface ColumnConfig {
   key: string
@@ -41,13 +42,14 @@ interface ReuseableTableProps {
   pageSize?: number
   useUrlQuery?: boolean
   ssr?: boolean
-  ssrQueryFunc?: (params: TableQueryParams) => Promise<TableQueryResult>
+  ssrQueryFunc?: (params: TableQueryParams) => Promise<TableQueryResult>,
+  onTaskCreate?: () => void
 }
 
 const ReusableTable = (props: ReuseableTableProps) => {
   const {
     data = [], rowId = 'id', columns, selectable, loading, pageSize = DEFAULT_PAGE_SIZE, searchable = true, searchFields = [],
-    onSelectRows, useUrlQuery, ssr, ssrQueryFunc,
+    onSelectRows, useUrlQuery, ssr, ssrQueryFunc, onTaskCreate
   } = props
   
   const { page, sortedBy, searchText, changeSearchText, changeSortedBy, changePage } = useTableStateManager({ byUrlQuery: useUrlQuery})
@@ -56,19 +58,12 @@ const ReusableTable = (props: ReuseableTableProps) => {
   const [total, setTotal] = useState(0)
   const [mounted, setMounted] = useState(false)
 
-  const allData = useRef<any>([])
+  // const allData = useRef<any>([])
+  let allData: Task[] = []
 
   useEffect(() => {
-    setTimeout(() => setMounted(true), 500)
+    setTimeout(() => setMounted(true), 1000)
   }, [])
-
-  useEffect(() => {
-    if (ssr) return
-    allData.current = data
-    if (searchText) filterAllData()
-    if (sortedBy) sortAllData()
-    updatePageData()
-  }, [data])
 
   useEffect(() => {
     if (!ssr) filterAllData()
@@ -86,6 +81,16 @@ const ReusableTable = (props: ReuseableTableProps) => {
     updatePageData()
   }, [page])
 
+  useEffect(() => {
+    if (ssr) return
+    allData = data
+    console.log(allData)
+    if (searchText && searchable) filterAllData()
+    if (sortedBy) sortAllData()
+    updatePageData()
+    console.log(allData)
+  }, [data])
+
   const updatePageData = () => {
     if (ssr) {
       if (!ssrQueryFunc) throw Error('Missing ssrQueryFunc props when use Table in serverside mode!')
@@ -95,12 +100,14 @@ const ReusableTable = (props: ReuseableTableProps) => {
           setTotal(res.count)
         })
     } else {
-      setDisplayData(allData.current.slice((page-1)*pageSize, page*pageSize))
+      console.log('1', allData)
+      setDisplayData(allData.slice((page-1)*pageSize, page*pageSize))
+      console.log('2', allData)
     }
   }
 
   const sortAllData = () => {
-    allData.current.sort((a: any, b: any) => {
+    allData.sort((a: any, b: any) => {
       let valA = a[sortedBy[0]]
       let valB = b[sortedBy[0]]
       if (typeof valA === 'string' && typeof valB === 'string') {
@@ -111,7 +118,7 @@ const ReusableTable = (props: ReuseableTableProps) => {
   }
 
   const filterAllData = () => {
-    allData.current = data.filter(e => {
+    allData = data.filter(e => {
       for (let key of searchFields) {
         if (String(e[key]).toLowerCase().includes(searchText)) return true
       }
@@ -129,8 +136,8 @@ const ReusableTable = (props: ReuseableTableProps) => {
   }
 
   const count = useMemo(() => {
-    return ssr ? total : allData.current.length
-  }, [allData.current, total, ssr])
+    return ssr ? total : allData.length
+  }, [allData, total, ssr])
 
   const isEmpty = !loading && count === 0
 
@@ -143,7 +150,7 @@ const ReusableTable = (props: ReuseableTableProps) => {
       )}
       <Box minH='200px' opacity={loading ? 0.5 : 1}>
         <Flex alignItems='center' py='10px'>
-          <TableToolbar searchable={searchable} defaultSearch={searchText} onSearch={mounted ? changeSearchText : undefined} />
+          <TableToolbar searchable={searchable} defaultSearch={searchText} onSearch={mounted ? changeSearchText : undefined} onCreate={onTaskCreate}/>
         </Flex>
         <Header
           selectable={selectable}

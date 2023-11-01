@@ -5,10 +5,11 @@ interface TableToolbarProps {
   defaultSearch?: string
   searchable?: boolean
   onSearch?: (keyword: string) => void
+  onCreate?: () => void
 }
 
 const TableToolbar = (props: TableToolbarProps) => {
-  const { searchable, defaultSearch, onSearch } = props
+  const { searchable, defaultSearch, onSearch, onCreate } = props
   const [value, setValue] = useState(defaultSearch)
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const TableToolbar = (props: TableToolbarProps) => {
           width="initial"
         />
       )}
-      <Button>Create</Button>
+      <Button onClick={onCreate}>Create</Button>
     </Flex>
   )
 }

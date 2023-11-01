@@ -4,7 +4,7 @@ export interface ModalProps {
 }
 
 export interface CreateModalProps extends ModalProps {
-  onCreate: () => void;
+  onCreate?: (e) => {};
 }
 
 export interface DeleteModalProps extends ModalProps {
