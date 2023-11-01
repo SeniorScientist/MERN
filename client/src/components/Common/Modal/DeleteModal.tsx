@@ -12,16 +12,16 @@ const DeleteModal = (props: DeleteModalProps) => {
         <ModalOverlay bg="rgba(0, 0, 0, 0.5)" p={{ base: 4, md: "unset" }} />
         <ModalContent>
           <ModalHeader>Confirm Deletion</ModalHeader>
-          <ModalBody>Are you sure you want to delete this task?</ModalBody>
+          <ModalBody>Are you sure you want to delete a task or the tasks?</ModalBody>
           <ModalFooter>
             <Button
               onClick={onDelete}
               type="button"
-              className="bg-red-50">
+              background="red.500">
                Delete
             </Button>
 
-            <Button onClick={onClose} className="ml-3">
+            <Button onClick={onClose} marginLeft="3">
               Cancel
             </Button>
           </ModalFooter>

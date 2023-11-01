@@ -29,7 +29,7 @@ const CreateModal = (props: CreateModalProps) => {
             <Button
               isLoading={isLoading}
               type="submit"
-              background="twitter.500"
+              background="blue.500"
               marginRight="3">
               Create
             </Button>
