@@ -1,13 +1,13 @@
 version: "3"
 services:
   mongo:
-    image: mongo:taskmanagement
+    image: mongo:latest
     ports:
       - "20717:20717"
     volumes:
       - /data/db # Create a volume for the DB.
   client:
-    container_name: taskclient
+    container_name: client-dev
     build:
       context: ./client
       dockerfile: Dockerfile.dev
@@ -21,7 +21,7 @@ services:
       - ./client:/app #Synchronise docker container with local change
       - /app/node_modules #Avoid re-copying local node_modules. Cache in volume.
   server:
-    container_name: taskserver
+    container_name: server-dev
     build:
       context: ./server
       dockerfile: Dockerfile.dev
