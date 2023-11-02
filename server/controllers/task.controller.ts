@@ -1,9 +1,8 @@
 import TaskService from "@services/task.service";
-import { validateCreateTask, validateUpdateTask, validateDeleteTask } from "@validations/task.validation";
+import { validateCreateTask, validateUpdateTask, validateDeleteMultiTask, validateGetTask } from "@validations/task.validation";
 import { Request, Response } from "express";
 import sanitize from "mongo-sanitize";
 import LoggerService from "@services/logger.service";
-import { Schema } from "mongoose";
 
 export const postTask = async (req: Request, res: Response) => {
   // Validate Create task
@@ -23,7 +22,7 @@ export const postTask = async (req: Request, res: Response) => {
 
     await TaskService.saveTask(newTask);
 
-    return res.status(200).send({ message: "Task were newly created." });
+    return res.status(200).send({ message: "Task was newly created." });
   } catch (error) {
     LoggerService.log.error(error);
 
@@ -32,13 +31,17 @@ export const postTask = async (req: Request, res: Response) => {
 };
 
 export const getAllTask = async (req: Request, res: Response) => {
-  try {
+  const { error } = validateGetTask(Object(req.query));
+  if (error) return res.status(400).send({ message: error.details[0].message });
 
-    let tasks = await TaskService.findTaskAll();
+  try {
+    
+    const { tasks, count } = await TaskService.findTaskAll(Object(req.query));
 
     return res.status(200).send({
       message: "Task retrieving was success.",
-      list: tasks
+      tasks,
+      count
     });
   } catch (error) {
     LoggerService.log.error(error);
@@ -51,19 +54,26 @@ export const updateTask = async (req: Request, res: Response) => {
   const { error } = validateUpdateTask(req.body);
   if (error) return res.status(400).send({ message: error.details[0].message });
 
-  let sanitizedInput = sanitize<{ id: typeof Schema.Types.ObjectId; title: string, description: string }>(req.body);
+  let sanitizedInput = sanitize<{ title: string, description: string }>(req.body);
 
   try {
-    let task = await TaskService.findTaskByTitle(sanitizedInput.title);
-
-    if (task) {
-      return res.status(400).send({ message: "Task title would be dupplicated. Take another title" });
+    const id = req.params.id;
+    if (!id) {
+      return res.status(400).send({ message: "Task not existing" });
     }
 
-    task = await TaskService.findTaskById(sanitizedInput.id);
+    const task = await TaskService.findTaskById(id);
 
     if (!task) {
       return res.status(400).send({ message: "Task is not existing. Try another task." });
+    }
+
+    if (task.title !== sanitizedInput.title) {
+      const task = await TaskService.findTaskByTitle(sanitizedInput.title);
+
+      if (task) {
+        return res.status(400).send({ message: "Task title would be dupplicated. Take another title" });
+      }
     }
 
     await TaskService.updateTask(task, sanitizedInput.title, sanitizedInput.description);
@@ -78,28 +88,20 @@ export const updateTask = async (req: Request, res: Response) => {
 };
 
 export const deleteTask = async (req: Request, res: Response) => {
-  const { error } = validateDeleteTask(req.body);
+  const { error } = validateDeleteMultiTask(req.body);
   if (error) return res.status(400).send({ message: error.details[0].message });
 
-  let sanitizedInput = sanitize<{ title: string }>(req.body);
-
+  let sanitizedInput = sanitize<{ ids: string[] }>(req.body);
+  console.log('deleteall', sanitizedInput)
   try {
-
-    let task = await TaskService.findTaskByTitle(sanitizedInput.title);
-
-    if (!task) {
-      return res.status(400).send({ message: "Task not existing. Take another title" });
-    }
-
-    await TaskService.deleteTaskById(task);
-
-    return res.status(200).send({ message: "Task was deleted successfully." });
+    await TaskService.deleteMultiTask(sanitizedInput.ids);
+    return res.status(200).send({ message: "Tasks were deleted successfully." });
   } catch (error) {
     LoggerService.log.error(error);
 
     return res.status(500).send("An unexpected error occurred");
   }
-};
+}
 
 
 export default {

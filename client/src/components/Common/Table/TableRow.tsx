@@ -8,10 +8,11 @@ interface TableRowProps {
   selected?: boolean
   onSelected?: (row: any,) => void
   itemData: any
+  handleClick: (row: any) => void
 }
 
 const TableRow = (props: TableRowProps) => {
-  const { itemData, columns, selectable = true, selected = false, onSelected } = props
+  const { itemData, columns, selectable = true, selected = false, onSelected, handleClick } = props
 
   return (
     <Flex>
@@ -28,10 +29,10 @@ const TableRow = (props: TableRowProps) => {
       )}
       {columns.map(e => {
         return (
-          <Box key={e.key} flex={e.flex || 1} alignItems='center' px='5px' py='10px'>
+          <Box key={e.key} flex={e.flex || 1} alignItems='center' px='5px' py='10px' cursor='pointer' onClick={e => handleClick(itemData)} overflow='hidden'>
             {e.render
               ? e.render(itemData)
-              : <Text>{itemData[e.key]}</Text>
+              : <Text wordBreak='normal' textOverflow='ellipsis'>{itemData[e.key]}</Text>
             }
           </Box>
         )

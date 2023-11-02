@@ -1,11 +1,11 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { AppbarContainer, NavbarContent } from "./styles";
 
 const Header = () => {
   return (
     <AppbarContainer>
-      <h1>Task Management Board</h1>
+      <Text fontSize='24px' color='black'>Task Management Board</Text>
 
       <NavbarContent>
         <Button as={Link} to="/logout">

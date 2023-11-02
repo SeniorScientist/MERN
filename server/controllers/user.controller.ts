@@ -4,7 +4,6 @@ import sanitize from "mongo-sanitize";
 import { validateRegisterInput } from "@validations/user.validation";
 
 import UserService from "@services/user.service";
-import TokenService from "@services/token.service";
 import LoggerService from "@services/logger.service";
 
 export const getUser = (req: Request, res: Response) => {
@@ -38,9 +37,6 @@ export const postUser = async (req: Request, res: Response) => {
   
     try {
       await UserService.saveUser(newUser);
-      const verificationToken = TokenService.createToken();
-      TokenService.setUserId(verificationToken, newUser._id);
-      TokenService.saveToken(verificationToken);
       
       return res.status(200).send({ message: "User registered successfully." });
 

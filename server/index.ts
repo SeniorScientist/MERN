@@ -31,8 +31,8 @@ app.use(
   session({
     // Used to compute a hash
     secret: process.env.SESSION_KEY!,
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     cookie: { maxAge: 60 * 60 * 1000 },
     // Store session on DB
     store: MongoStore.create({

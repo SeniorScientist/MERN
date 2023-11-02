@@ -13,9 +13,10 @@ interface Props {
   helperText?: string;
   required?: boolean;
   [key: string]: any;
+  defaultValue?: string;
 }
 
-const TextField = ({ name, label, helperText, required, ...rest }: Props) => {
+const TextField = ({ name, label, helperText, required, defaultValue, ...rest }: Props) => {
   const {
     register,
     formState: { errors },
@@ -33,7 +34,7 @@ const TextField = ({ name, label, helperText, required, ...rest }: Props) => {
       }}
     >
       {label && <FormLabel>{label}</FormLabel>}
-      <Input {...register(name)} {...rest} size="lg" />
+      <Input {...register(name)} {...rest} size="lg" defaultValue={defaultValue} />
       {errorMsg ? (
         <FormErrorMessage>{errorMsg as any}</FormErrorMessage>
       ) : helperText ? (

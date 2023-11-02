@@ -1,41 +1,49 @@
 import { Box, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, } from "@chakra-ui/react";
 import { CreateModalProps } from "@/types/modal";
-
+import { taskSchema } from "./task.schema";
+import Form from "../Form";
+import { useCreateAction } from "./useTaskAction";
+import TextField from "../TextField";
 
 const CreateModal = (props: CreateModalProps) => {
 
   const { isOpen, onClose, onCreate } = props;
+  const { handleSubmit, isLoading } = useCreateAction();
 
   return (
-    <Box>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay bg="rgba(0, 0, 0, 0.5)" p={{ base: 4, md: "unset" }} />
-        <ModalContent>
-          <ModalHeader>Confirm Creation</ModalHeader>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay bg="rgba(0, 0, 0, 0.5)" p={{ base: 4, md: "unset" }} />
+      <ModalContent>
+        <Form
+          onSubmit={(values) => handleSubmit(values)}
+          schema={taskSchema}
+        >
+          <ModalHeader>Task Creation</ModalHeader>
           <ModalBody>
             <Box>
-              <h1>
-                Are you sure you want to create this task?
-              </h1>
-              
+              <TextField name="title" label="Title" />
+              <TextField name="description" label="Description" />
             </Box>
-
           </ModalBody>
           <ModalFooter>
             <Button
-              onClick={onCreate}
-              type="button"
-              className="bg-red-50">
+              isLoading={isLoading}
+              type="submit"
+              background="blue.500"
+              marginRight="3">
               Create
             </Button>
 
-            <Button onClick={onClose} className="ml-3">
+            <Button
+              isLoading={isLoading}
+              onClick={onClose}>
               Cancel
             </Button>
           </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Box>
+        </Form >
+      </ModalContent>
+    </Modal>
+
   );
 };
 

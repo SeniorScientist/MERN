@@ -1,5 +1,5 @@
+import SearchDocument from "@models/search.model";
 import { Task, TaskDocument } from "@models/task.model";
-import { Schema } from "mongoose";
 
 export const createTask = ({
   title,
@@ -9,11 +9,32 @@ export const createTask = ({
   description: string;
 }) => new Task({ title, description });
 
-export const findTaskAll = async () => await Task.find({});
+export const findTaskAll = async (params: SearchDocument) => {
+  let query: SearchDocument = { ...params }
 
-export const findTaskByTitle = async (title: string) => await Task.findOne({ title: title});
+  if (!query.sortBy || query.sortBy === "id")
+    query.sortBy = "_id";
+  if (!query.page)
+    query.page = 1;
+  if (!query.pageSize)
+    query.pageSize = 10;
+  if (!query.order)
+    query.order = "asc";
 
-export const findTaskById = async (id: typeof Schema.Types.ObjectId) => await Task.findById(id);
+    console.log(query)
+
+  return {
+    tasks: await Task.find({ is_deleted: false })
+      .limit(query.pageSize)
+      .skip((query.page - 1) * query.pageSize)
+      .sort({ [query.sortBy]: query.order === 'asc' ? 1 : -1 }),
+    count: await Task.count({ is_deleted: false })
+  }
+}
+
+export const findTaskByTitle = async (title: string) => await Task.findOne({ title: title });
+
+export const findTaskById = async (id: string) => await Task.findById(id);
 
 export const saveTask = async (task: TaskDocument) => await task.save();
 
@@ -24,7 +45,9 @@ export const updateTask = async (task: TaskDocument, title: string, description:
   await task.save();
 }
 
-export const deleteTaskById = async (task: TaskDocument) => await Task.findByIdAndDelete(task._id);
+export const deleteMultiTask = async (tasks: string[]) => {
+  await Task.updateMany({ '_id': { '$in': tasks } }, { $set: { is_deleted: true } });
+}
 
 export default {
   createTask,
@@ -33,5 +56,5 @@ export default {
   findTaskByTitle,
   findTaskById,
   saveTask,
-  deleteTaskById
+  deleteMultiTask
 };

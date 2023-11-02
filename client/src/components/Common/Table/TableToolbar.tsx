@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react'
 interface TableToolbarProps {
   defaultSearch?: string
   searchable?: boolean
+  removable?: boolean
   onSearch?: (keyword: string) => void
+  onCreate?: () => void
+  onDelete?: () => void
 }
 
 const TableToolbar = (props: TableToolbarProps) => {
-  const { searchable, defaultSearch, onSearch } = props
+  const { searchable, defaultSearch, removable = false, onSearch, onCreate, onDelete } = props
   const [value, setValue] = useState(defaultSearch)
 
   useEffect(() => {
@@ -20,7 +23,7 @@ const TableToolbar = (props: TableToolbarProps) => {
   }, [value])
 
   return (
-    <Flex flexDir="row" justifyContent="space-between" width="100%">
+    <Flex flexDir="row" justifyContent="end" width="100%">
       {searchable && (
         <Input
           placeholder='Search...'
@@ -29,7 +32,12 @@ const TableToolbar = (props: TableToolbarProps) => {
           width="initial"
         />
       )}
-      <Button>Create</Button>
+      <Button onClick={onCreate} background="blue.500">Create</Button>
+      {
+        removable && (
+          <Button onClick={onDelete} marginLeft="3" background="red.500">Delete</Button>
+        )
+      }
     </Flex>
   )
 }

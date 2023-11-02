@@ -1,7 +1,6 @@
 import passport from "passport";
-import { UserDocument, User } from "@models/user.model";
+import { User } from "@models/user.model";
 import Local from "passport-local";
-import { Error } from "mongoose";
 
 export function initPassportJS() {
   passport.use(
@@ -22,7 +21,12 @@ export function initPassportJS() {
   );
   passport.serializeUser((user, done) => done(undefined, user));
 
-  passport.deserializeUser((id, done) =>
-    User.findById(id, (err: Error, user: UserDocument) => done(err, user))
-  );
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await User.findById(id);
+      done(null, user)
+    } catch (error) {
+      done(error, null);
+    }
+  });
 }

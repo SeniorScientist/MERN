@@ -4,10 +4,9 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoute = () => {
   const isAuthenticated = useAuth((state) => state.isAuthenticated);
-  const hasAccessToken = localStorage.getItem("access_token");
-
-  if (isAuthenticated || hasAccessToken) {
-    return <Navigate to="/login" />;
+ 
+  if (isAuthenticated) {
+    return <Navigate to="/task" />;
   }
 
   return (
