@@ -1,25 +1,25 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Task } from "@/types/task"
 import ReusableTable, { ColumnConfig } from "@/components/Common/Table";
 import API from "@/services/API";
 import CreateModal from "@/components/Common/Modal/CreateModal";
 import DeleteModal from "@/components/Common/Modal/DeleteModal";
-import { useNavigate } from "react-router-dom";
 import UpdateModal from "@/components/Common/Modal/UpdateModal";
-import moment from "moment";
+import { redirect } from "react-router-dom";
 
 const Columns: ColumnConfig[] = [
   { key: 'id', flex: 0.5, label: 'ID', sortable: true },
   { key: 'title', flex: 2, label: 'Title', sortable: true },
   { key: 'description', flex: 3, label: 'Description', sortable: true },
-  { key: 'createdAt', flex: 2, label: 'Created At' }
+  { key: 'createdAt', flex: 2, label: 'Created At', sortable: true }
 ]
 
 const TaskBoard = () => {
-  
+
   const [loading, setLoading] = useState<boolean>(true);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [totalCount, setCount] = useState<number>(0);
   const [selectedRows, setSelectedRows] = useState<Task[]>([]);
   const [selectedRow, setSelectedRow] = useState<Task>();
 
@@ -29,23 +29,20 @@ const TaskBoard = () => {
 
 
   useEffect(() => {
-    fetchData();
+    fetchData("");
   }, [])
 
-  const fetchData = async () => {
+  const fetchData = async (params: string) => {
     try {
       setLoading(true);
-      const res = await API.get('/task', { params: {} });
-      const tasks = res.data.list.map((e: any, index: number) => ({
-        id: index + 1,
-        _id: e._id,
-        title: e.title,
-        description: e.description,
-        createdAt: moment(e.createdAt).format('MM/DD/YYYY hh:mm:ss')
-      }))
+      console.log(params)
+      const res = await API.get(`/task?${params}`);
+      const { tasks, count } = res.data;
+
       setTasks(tasks);
+      setCount(count);
     } catch (err) {
-      console.log("~ file: index.tsx ~ line 30 ~ fetchData ~ err", err);
+      console.log("~ file: index.tsx ~ line 36 ~ fetchData ~ err", err);
     } finally {
       setLoading(false);
     }
@@ -67,6 +64,8 @@ const TaskBoard = () => {
     } finally {
       setLoading(false);
       handleDeleteModal();
+
+      redirect("/task");
     }
   }
 
@@ -94,6 +93,7 @@ const TaskBoard = () => {
           loading={loading}
           columns={Columns}
           data={tasks}
+          totalCount={totalCount}
           searchable={false}
           // searchFields={['title']}
           onSelectRows={rows => setSelectedRows(rows)}
@@ -101,6 +101,7 @@ const TaskBoard = () => {
           onRowClick={row => handleUpdateRow(row)}
           onTaskCreate={handleCreateModal}
           onTaskDelete={handleDeleteModal}
+          updatePath={(e) => fetchData(e)}
         />
         <CreateModal isOpen={isCreateOpen} onClose={handleCreateModal} />
         <DeleteModal isOpen={isDeleteOpen} onClose={handleDeleteModal} onDelete={deleteTasks} />

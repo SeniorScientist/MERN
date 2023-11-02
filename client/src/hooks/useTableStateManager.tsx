@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 
 interface StateManagerProps {
   byUrlQuery?: boolean
+  updatePath: (param: string) => void
 }
 
 const useTableStateManager = (params: StateManagerProps) => {
-  const { byUrlQuery } = params
+  const { byUrlQuery, updatePath } = params
   const [page, setPage] = useState(1)
   const [sortedBy, setSortedBy] = useState(['', 'asc'])
   const [searchText, setSearchText] = useState('')
@@ -22,6 +23,7 @@ const useTableStateManager = (params: StateManagerProps) => {
       setSortedBy([sortBy, order])
       setPage(page == 0 ? 1 : page)
       setSearchText(search)
+      
     }
   }, [byUrlQuery]);
 
@@ -45,6 +47,7 @@ const useTableStateManager = (params: StateManagerProps) => {
     let queryParams = new URLSearchParams(window.location.search);
     data.forEach(e => queryParams.set(e[0], String(e[1])))
     window.history.replaceState(null, '', '?' + queryParams.toString());
+    updatePath(queryParams.toString());
   }
 
   return {

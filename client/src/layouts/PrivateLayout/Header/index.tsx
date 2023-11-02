@@ -5,7 +5,7 @@ import { AppbarContainer, NavbarContent } from "./styles";
 const Header = () => {
   return (
     <AppbarContainer>
-      <Text fontSize='24px' color='tomato'>Task Management Board</Text>
+      <Text fontSize='24px' color='black'>Task Management Board</Text>
 
       <NavbarContent>
         <Button as={Link} to="/logout">

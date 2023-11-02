@@ -1,24 +1,23 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: process.env.API_URL as string || "http://localhost:8081/api",
+  baseURL: process.env.API_URL as string || "http://localhost:8081/api"
 });
 
 API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  config.withCredentials = true;
   return config;
 });
 
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response.status === 401) {
-      localStorage.removeItem("access_token");
-      window.location.href = "/login";
-    }
+
+    // if (error.response.status === 401 || (error.response.status === 400 && error.response.data.message === "Missing credentials")) {
+    //   localStorage.removeItem("access_token");
+    //   window.location.href = "/login";
+    // }
+
     return Promise.reject(error);
   }
 );

@@ -1,11 +1,12 @@
 import { Box, Center, CircularProgress, Flex, Text } from "@chakra-ui/react"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { DEFAULT_PAGE_SIZE } from "@/constants/table"
 import useTableStateManager from "@/hooks/useTableStateManager"
 import Header from "./TableHead"
 import TablePagination from "./TablePagination"
 import TableRow from "./TableRow"
 import TableToolbar from "./TableToolbar"
+import moment from "moment"
 
 export interface ColumnConfig {
   key: string
@@ -32,6 +33,7 @@ export interface TableQueryResult {
 interface ReuseableTableProps {
   columns: ColumnConfig[]
   data?: any[]
+  totalCount: number
   rowId?: string
   selectable?: boolean
   onSelectRows?: (rows: any[]) => void
@@ -45,15 +47,16 @@ interface ReuseableTableProps {
   onTaskCreate?: () => void
   onTaskDelete?: () => void
   onRowClick: (row: any) => void
+  updatePath: (e: string) => void
 }
 
 const ReusableTable = (props: ReuseableTableProps) => {
   const {
-    data = [], rowId = 'id', columns, selectable, loading, pageSize = DEFAULT_PAGE_SIZE, searchable = true, searchFields = [],
-    onSelectRows, useUrlQuery, ssr, ssrQueryFunc, onTaskCreate, onTaskDelete, onRowClick
+    data = [], totalCount, rowId = 'id', columns, selectable, loading, pageSize = DEFAULT_PAGE_SIZE, searchable = true, searchFields = [],
+    onSelectRows, useUrlQuery, ssr, ssrQueryFunc, onTaskCreate, onTaskDelete, onRowClick, updatePath
   } = props
-  
-  const { page, sortedBy, searchText, changeSearchText, changeSortedBy, changePage } = useTableStateManager({ byUrlQuery: useUrlQuery})
+
+  const { page, sortedBy, searchText, changeSearchText, changeSortedBy, changePage } = useTableStateManager({ byUrlQuery: useUrlQuery, updatePath })
   const [displayData, setDisplayData] = useState<any[]>([])
   const [selectedRows, setSelectedRows] = useState(new Map())
   const [total, setTotal] = useState(0)
@@ -66,26 +69,9 @@ const ReusableTable = (props: ReuseableTableProps) => {
 
   useEffect(() => {
     if (ssr) return
-    if (sortedBy) sortAllData()
     updatePageData()
-  
+
   }, [data])
-
-  // useEffect(() => {
-  //   if (!ssr) filterAllData()
-  //   if (mounted && page !== 1) changePage(1)
-  //   else updatePageData()
-  // }, [searchText])
-
-  // useEffect(() => {
-  //   if (!ssr) sortAllData()
-  //   if (mounted && page !== 1) changePage(1)
-  //   else updatePageData()
-  // }, [sortedBy])
-
-  // useEffect(() => {
-  //   updatePageData()
-  // }, [page])
 
   const updatePageData = () => {
     if (ssr) {
@@ -96,19 +82,16 @@ const ReusableTable = (props: ReuseableTableProps) => {
           setTotal(res.count)
         })
     } else {
-      setDisplayData(data)
+      setDisplayData(
+        data.map((e, index: number) => ({
+          id: ((page - 1) * pageSize) + index + 1,
+          rowId: e._id,
+          _id: e._id,
+          title: e.title,
+          description: e.description,
+          createdAt: moment(e.createdAt).format('MM/DD/YYYY hh:mm:ss')
+        })))
     }
-  }
-
-  const sortAllData = () => {
-    data.sort((a: any, b: any) => {
-      let valA = a[sortedBy[0]]
-      let valB = b[sortedBy[0]]
-      if (typeof valA === 'string' && typeof valB === 'string') {
-        return sortedBy[1] === 'desc' ? valA.localeCompare(valB) : valB.localeCompare(valA)
-      }
-      return sortedBy[1] === 'desc' ? valB-valA : valA-valB
-    })
   }
 
   const onSelectedRow = (row: any) => {
@@ -120,11 +103,7 @@ const ReusableTable = (props: ReuseableTableProps) => {
     if (onSelectRows) onSelectRows(Array.from(newMap.values()))
   }
 
-  const count = useMemo(() => {
-    return ssr ? total : data.length
-  }, [data, total, ssr])
-
-  const isEmpty = !loading && count === 0
+  const isEmpty = !loading && totalCount === 0
 
   return (
     <Box position='relative'>
@@ -135,7 +114,7 @@ const ReusableTable = (props: ReuseableTableProps) => {
       )}
       <Box minH='200px' opacity={loading ? 0.5 : 1}>
         <Flex alignItems='center' py='10px'>
-          <TableToolbar searchable={searchable} defaultSearch={searchText} onSearch={mounted ? changeSearchText : undefined} removable={selectedRows.size > 0} onCreate={onTaskCreate} onDelete={onTaskDelete}/>
+          <TableToolbar searchable={searchable} defaultSearch={searchText} onSearch={mounted ? changeSearchText : undefined} removable={selectedRows.size > 0} onCreate={onTaskCreate} onDelete={onTaskDelete} />
         </Flex>
         <Header
           selectable={selectable}
@@ -145,11 +124,11 @@ const ReusableTable = (props: ReuseableTableProps) => {
           order={sortedBy[1]}
         />
         <Flex flexDir='column'>
-          {isEmpty && <Center><Text>No data</Text></Center>}
-          {displayData.map(item => {
+          {isEmpty && <Center><Text margin="6">No data</Text></Center>}
+          {displayData.map((item, index) => {
             return (
               <TableRow
-                key={item[rowId]}
+                key={item[rowId] || index}
                 columns={columns}
                 itemData={item}
                 selectable={selectable}
@@ -164,7 +143,7 @@ const ReusableTable = (props: ReuseableTableProps) => {
           <TablePagination
             page={page}
             pageSize={pageSize}
-            total={count}
+            total={totalCount}
             onPageChanged={changePage}
           />
         </Flex>
