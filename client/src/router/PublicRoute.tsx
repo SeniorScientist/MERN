@@ -4,7 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoute = () => {
   const isAuthenticated = useAuth((state) => state.isAuthenticated);
- 
+
   if (isAuthenticated) {
     return <Navigate to="/task" />;
   }

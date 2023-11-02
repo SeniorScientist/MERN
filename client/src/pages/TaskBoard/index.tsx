@@ -6,7 +6,8 @@ import API from "@/services/API";
 import CreateModal from "@/components/Common/Modal/CreateModal";
 import DeleteModal from "@/components/Common/Modal/DeleteModal";
 import UpdateModal from "@/components/Common/Modal/UpdateModal";
-import { redirect } from "react-router-dom";
+import { Navigate, redirect } from "react-router-dom";
+import useNotify from "@/hooks/useNotify";
 
 const Columns: ColumnConfig[] = [
   { key: 'id', flex: 0.5, label: 'ID', sortable: true },
@@ -26,7 +27,7 @@ const TaskBoard = () => {
   const [isCreateOpen, setCreateOpen] = useState<boolean>(false);
   const [isUpdateOpen, setUpdateOpen] = useState<boolean>(false);
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
-
+  const { notifySuccess, notifyError } = useNotify();
 
   useEffect(() => {
     fetchData("");
@@ -35,14 +36,14 @@ const TaskBoard = () => {
   const fetchData = async (params: string) => {
     try {
       setLoading(true);
-      console.log(params)
       const res = await API.get(`/task?${params}`);
       const { tasks, count } = res.data;
 
       setTasks(tasks);
       setCount(count);
-    } catch (err) {
-      console.log("~ file: index.tsx ~ line 36 ~ fetchData ~ err", err);
+    } catch (error: any) {
+      notifyError(error.response.data.message);
+      console.log("~ file: index.tsx ~ line 36 ~ fetchData ~ err", error);
     } finally {
       setLoading(false);
     }
@@ -59,13 +60,13 @@ const TaskBoard = () => {
           })
         }
       });
-    } catch (err) {
-
+      notifySuccess(res.data.message);
+      window.location.reload();
+    } catch (error: any) {
+      notifyError(error.response.data.message);
     } finally {
       setLoading(false);
       handleDeleteModal();
-
-      redirect("/task");
     }
   }
 
@@ -112,3 +113,7 @@ const TaskBoard = () => {
 };
 
 export default TaskBoard;
+function notifyError() {
+  throw new Error("Function not implemented.");
+}
+

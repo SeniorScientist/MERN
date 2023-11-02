@@ -12,22 +12,19 @@ export const createTask = ({
 export const findTaskAll = async (params: SearchDocument) => {
   let query: SearchDocument = { ...params }
 
-  if (!query.sortBy || query.sortBy === "id")
+  if (!query.sortBy || query.sortBy === "id") {
     query.sortBy = "_id";
-  if (!query.page)
-    query.page = 1;
-  if (!query.pageSize)
-    query.pageSize = 10;
-  if (!query.order)
-    query.order = "asc";
+  }
 
-    console.log(query)
+  query.page = query.page || 1;
+  query.pageSize = query.pageSize || 10;
+  query.order = query.order || "asc";
 
   return {
     tasks: await Task.find({ is_deleted: false })
       .limit(query.pageSize)
       .skip((query.page - 1) * query.pageSize)
-      .sort({ [query.sortBy]: query.order === 'asc' ? 1 : -1 }),
+      .sort({ [query.sortBy]: query.order === "asc" ? 1 : -1 }),
     count: await Task.count({ is_deleted: false })
   }
 }

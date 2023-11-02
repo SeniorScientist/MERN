@@ -21,7 +21,7 @@ const useLoginActions = () => {
     {
       onSuccess: (response) => {
         console.log(response)
-        localStorage.setItem("access_token", response.data.access_token);
+       
         notifySuccess("Login was successfull, enjoy!");
         setIsAuthenticated(true);
         setUser(response.data.user);

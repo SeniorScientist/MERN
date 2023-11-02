@@ -18,7 +18,7 @@ const Router = () => {
           <Route path="/logout" element={<Logout />} />
           <Route path="/task" element={<TaskBoard />}/>
         </Route>
-
+      
       </Routes>
     </BrowserRouter>
   )
