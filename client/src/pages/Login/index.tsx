@@ -11,8 +11,8 @@ const Login = () => {
 
   return (
     <section className="public-form">
-      <h1>Welcome 🥗</h1>
-      <h2>🔐 Log in to unleash your potential!</h2>
+      <h1>Welcome</h1>
+      <h2>Log in to unleash your potential!</h2>
 
       <Form
         onSubmit={(values) => handleSubmit(values)}

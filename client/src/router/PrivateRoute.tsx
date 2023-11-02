@@ -22,12 +22,12 @@ const PrivateRoute = () => {
       })
       .catch((error: Error) => {
         setIsAuthenticated(false);
+        setUser(null);
         return <Navigate to="/login" />;
       })
       .finally(() => {
         setIsFetching(false);
       });
-    return null;
   }
 
 

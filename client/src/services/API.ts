@@ -13,10 +13,9 @@ API.interceptors.response.use(
   (response) => response,
   (error) => {
 
-    // if (error.response.status === 401 || (error.response.status === 400 && error.response.data.message === "Missing credentials")) {
-    //   localStorage.removeItem("access_token");
-    //   window.location.href = "/login";
-    // }
+    if (error.response.status === 401 || error.response.data.message === "Missing credentials") {
+      window.location.href = "/login";
+    }
 
     return Promise.reject(error);
   }

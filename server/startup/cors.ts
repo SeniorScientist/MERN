@@ -4,7 +4,7 @@ import { Express } from "express";
 export function initCORS(app: Express) {
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: `http://${process.env.HOST}`,
       methods: ["GET", "POST", "PUT", "OPTIONS", "DELETE"],
       optionsSuccessStatus: 204,
       credentials: true

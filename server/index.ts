@@ -49,6 +49,5 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 initRoutes(app);
 app.listen(port, () => winston.info(`Listening on port ${port}...`));
