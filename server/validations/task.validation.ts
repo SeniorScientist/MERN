@@ -1,3 +1,4 @@
+import SearchDocument from "@models/search.model";
 import { TaskDocument } from "@models/task.model";
 import Joi from "joi";
 
@@ -10,6 +11,18 @@ export function validateCreateTask(
   });
 
   return schema.validate(input);
+}
+
+export function validateGetTask(
+  input: Pick<SearchDocument, "page" | "sortBy" | "order">
+  ) {
+    const schema = Joi.object({
+      page: Joi.number().min(1),
+      sortBy: Joi.string().min(1),
+      order: Joi.string().min(3)
+    });
+
+    return schema.validate(input);
 }
 
 export function validateUpdateTask(

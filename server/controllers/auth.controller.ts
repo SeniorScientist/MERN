@@ -4,7 +4,6 @@ import { validateLoginInput } from "@validations/user.validation";
 
 import { UserDocument } from "@models/user.model";
 import UserService from "@services/user.service";
-import jwt from "jsonwebtoken";
 
 export const postLogin = (req: Request, res: Response, next: NextFunction) => {
   const { error } = validateLoginInput(req.body);
@@ -26,19 +25,25 @@ export const postLogin = (req: Request, res: Response, next: NextFunction) => {
       if (err) {
         res.status(401).send({ message: "Authentication failed", err });
       }
-      res.status(200).send({ message: "Login success", user: UserService.getUser(user), access_token: jwt.sign({username: user.username}, process.env.TOKEN_SECRET!, { expiresIn: '1h' })});
+      res.status(200).send({ message: "Login success", user: UserService.getUser(user) });
     });
   })(req, res, next);
 };
 
 export const postLogout = (req: Request, res: Response) => {
-  req.session.destroy((err: Error) => {
+  req.logout((err: Error) => {
     if (err) {
-      res.status(500).send({ message: "Logout failed", err });
+      res.status(400).send({ message: 'Logout failed', err });
     }
-    req.sessionID = "";
-    // req.logout();
-    res.status(200).send({ message: "Logout success" });
+
+    req.session.destroy((err: Error) => {
+      if (err) {
+        res.status(400).send({ message: "Logout failed", err });
+      }
+      res.clearCookie('connect.sid');
+      req.sessionID = "";
+      res.status(200).send({ message: "Logout success" });
+    });
   });
 };
 

@@ -1,5 +1,5 @@
 import TaskService from "@services/task.service";
-import { validateCreateTask, validateUpdateTask, validateDeleteMultiTask } from "@validations/task.validation";
+import { validateCreateTask, validateUpdateTask, validateDeleteMultiTask, validateGetTask } from "@validations/task.validation";
 import { Request, Response } from "express";
 import sanitize from "mongo-sanitize";
 import LoggerService from "@services/logger.service";
@@ -22,7 +22,7 @@ export const postTask = async (req: Request, res: Response) => {
 
     await TaskService.saveTask(newTask);
 
-    return res.status(200).send({ message: "Task were newly created." });
+    return res.status(200).send({ message: "Task was newly created." });
   } catch (error) {
     LoggerService.log.error(error);
 
@@ -31,13 +31,17 @@ export const postTask = async (req: Request, res: Response) => {
 };
 
 export const getAllTask = async (req: Request, res: Response) => {
-  try {
+  const { error } = validateGetTask(Object(req.query));
+  if (error) return res.status(400).send({ message: error.details[0].message });
 
-    let tasks = await TaskService.findTaskAll();
+  try {
+    
+    const { tasks, count } = await TaskService.findTaskAll(Object(req.query));
 
     return res.status(200).send({
       message: "Task retrieving was success.",
-      list: tasks
+      tasks,
+      count
     });
   } catch (error) {
     LoggerService.log.error(error);
