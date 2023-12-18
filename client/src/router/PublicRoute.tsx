@@ -7,7 +7,7 @@ const PublicRoute = () => {
 
   if (isAuthenticated) {
     return <Navigate to="/task" />;
-  }
+  } 
 
   return (
     <PublicLayout>
